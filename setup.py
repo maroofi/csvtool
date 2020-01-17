@@ -3,11 +3,8 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open('requirements.txt') as f:
-    dependencies = f.read().splitlines()
     
-dependencies = [x.strip() for x in dependencies if x.strip() != '']
-dependencies = [x for x in dependencies if not x.startswith('#')]
+dependencies = []
 
 long_description = """
 csvtool is a simple command-line tool to 1) extract statistics, 2) perform regular expression search and, 3) generate output file 
