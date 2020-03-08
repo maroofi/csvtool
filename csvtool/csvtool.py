@@ -58,7 +58,7 @@ def main():
                         action='store',
                         dest='search',
                         default='',
-                        help="""Search for a specific python regex pattern (optionally on specific columns specified by --column or all columns).\nIf (?i) specified, the search is case-insensitive.\nExample:\n1) csvtool output.csv --search '(?i)test'  # matches test, Test, TeSt, ...\n2) csvtool output.csv --column 2 --search '^US$'  # matches all the lines which have exactly 'US' value in their second columns."""
+                        help="""Search for a specific python regex pattern (optionally on specific columns specified by --column or all columns).\nIf (?i) specified, the search is case-insensitive.\nExample:\n1) csvtool output.csv --search '(?i)test'  # matches test, Test, TeSt, ...\n2) csvtool output.csv --column 2 --search '^US$'  # matches all the lines which have exactly 'US' value in their second columns.\n3) csvtool output.csv -c 2 -s '^(?:(?!Hello).)*$'  # matches all the lines which have not 'Hello' in their second columns."""
     )
     parser.add_argument('-r','--print-header',
                         action='store_true',
@@ -195,6 +195,8 @@ def main():
     if pargs.search != '':
         if re_search == None:return False
         ln = 0 if pargs.noheader == True else 1
+        if not pargs.noheader: # print header if there is
+            print("{}".format(create_write_object(pargs.delimiter,header)))
         for line in reader:
             ln += 1
             if len(cols) == 0:
@@ -263,7 +265,13 @@ def main():
         return True
     #end if
     ## if nothing specified, print csv file (all or specific columns)
+    ## with header (if there is one) with all or specific columns
     ln = 0 if pargs.noheader == True else 1
+    if not pargs.noheader:
+        if len(cols) == 0:
+            print("{}".format(create_write_object(pargs.delimiter,header)))
+        else:
+            print("{}".format(create_write_object(pargs.delimiter,[header[c] for c in cols])))
     for line in reader:
         ln += 1
         if len(cols) == 0:
