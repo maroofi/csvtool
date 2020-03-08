@@ -50,6 +50,7 @@ csvtool -c 2 -s '^Chevy$' test.csv | csvtool --no-header -c 1,5,3
 output:
 
 ```
+Year,Price,Model
 1999,4900.00,"Venture ""Extended Edition"""
 1999,5000.00,"Venture ""Extended Edition, Very Large"""
 ```
@@ -61,6 +62,7 @@ csvtool -c 1,2 test.csv
 output:
 
 ```
+Year,Make
 1997,Ford
 1999,Chevy
 1999,Chevy
@@ -68,4 +70,5 @@ output:
 ```
 
 #### TODO LIST
-1. Add replace command to replace some specific values.
+1. ~~Add header to the output.~~ :heavy_check_mark:
+2. Add replace command to replace some specific values.
