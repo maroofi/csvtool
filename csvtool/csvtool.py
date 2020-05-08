@@ -201,8 +201,6 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE:
-            return True
         return False
     # end except
     #then handle search query for columns
@@ -248,8 +246,6 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE:
-            return True
         return False
     # end except
     #Now handle most common
@@ -290,8 +286,6 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE:
-            return True
         return False
     # end except
     ## if nothing specified, print csv file (all or specific columns)
@@ -319,8 +313,6 @@ def main():
         fr.close()
         return True
     except IOError as e:
-        if e.errno == errno.EPIPE:
-            return True
         return False
     # end except
 
