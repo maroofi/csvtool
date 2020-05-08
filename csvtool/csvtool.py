@@ -201,7 +201,7 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE
+        if e.errno == errno.EPIPE:
             return True
         return False
     # end except
@@ -248,7 +248,7 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE
+        if e.errno == errno.EPIPE:
             return True
         return False
     # end except
@@ -290,7 +290,7 @@ def main():
             return True
         #end if
     except IOError as e:
-        if e.errno == errno.EPIPE
+        if e.errno == errno.EPIPE:
             return True
         return False
     # end except
@@ -319,7 +319,7 @@ def main():
         fr.close()
         return True
     except IOError as e:
-        if e.errno == errno.EPIPE
+        if e.errno == errno.EPIPE:
             return True
         return False
     # end except
