@@ -13,7 +13,7 @@ without writing code for such simple tasks for .CSV files.
 
 setup(
     name='csvtool',
-    version="0.1",
+    version="0.2",
     url='https://github.com/maroofi/csvtool/',
     author='Sourena Maroofi',
     install_requires=dependencies,

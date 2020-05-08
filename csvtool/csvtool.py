@@ -19,7 +19,7 @@ def open_file(file_name):
 
 
 def main():
-    VERSION = '0.1'
+    VERSION = '0.2'
     desc = '''Small program to parse .CSV files.\nWritten by s.maroofi (maroofi@gmail.com)\nVersion {}'''.format(VERSION)
 
     parser = argparse.ArgumentParser(description=desc,formatter_class=RawTextHelpFormatter)    
