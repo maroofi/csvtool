@@ -113,35 +113,48 @@ def main():
     ####################parsing column#######################
     cols = []
     if pargs.column != '':
-        if pargs.column.find("-") != -1:
-            temp = pargs.column.split("-")
-            if(len(temp)==2):
-                st = None;en = None;
-                try:
-                    st = int(temp[0].strip())
-                    en = int(temp[1].strip())
-                except:
+        cl = pargs.column.split(",")
+        cl = [x.strip() for x in cl if x.strip() != '']
+        for x in cl:
+            if x.find("-") != -1:
+                temp = x.split("-")
+                if(len(temp)==2):
+                    st = None;en = None;
+                    try:
+                        st = int(temp[0].strip())
+                        en = int(temp[1].strip())
+                    except:
+                        print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
+                        return False
+                    if en < st:
+                        print("ERROR: --column/-c should be in the form fo start-end (start > end) or colX,colY,.. or just colZ starting from 1.")
+                        return False
+                    if st<1:
+                        print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
+                        return False
+                    cols += list(range(st-1,en))
+                else:
                     print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
                     return False
-                if en < st:
-                    print("ERROR: --column/-c should be in the form fo start-end (start > end) or colX,colY,.. or just colZ starting from 1.")
-                    return False
-                cols = list(range(st-1,en))
+                # end if
             else:
-                print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
-                return False
-        elif pargs.column.find(',') != -1:
-            temp = pargs.column.split(",")
-            try:
-                cols = [int(x.strip())-1 for x in temp]
-            except:
-                print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
-                return False
-        else:
-            cols.append(int(pargs.column.strip())-1)
-        #end if
+                try:
+                    if int(x.strip())<1:
+                        print("ERROR: --column/-c should be start-end or colX,colY,.. or just colX starting from 1.")
+                        return False
+                    cols.append(int(x.strip())-1)
+                except:
+                    print("ERROR: --column/-c should be a number/range separated by comma")
+                    return False
+            #end if
     #end if
+    tmp_cols = []
+    for x in cols:
+        if x not in tmp_cols:
+            tmp_cols.append(x)
+    cols = tmp_cols
     #print(cols)
+    return False
     ###################parsing stat#########################
     stat = pargs.stat
     ##################parsing most_common###################
