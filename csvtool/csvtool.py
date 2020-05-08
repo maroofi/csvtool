@@ -165,140 +165,164 @@ def main():
     ########################################################
     # now go through switches one by one.
     # the first one is stat, if stat is true -> print statistics and exit peacefully
-    if stat == True:
-        data = []
-        for line in reader:
-            data.append(line)
-        fr.close()
-        print("File name: {}".format(pargs.file))
-        print("Number of entries: {}".format(len(data)))
-        if pargs.noheader == False:
-            print("Headers of CSV")
-            print("--------------")
-            print(create_write_object(pargs.delimiter,header))
-        if len(data) == 0:return False
-        col_cnt = len(data[0])
-        for x in data:
-            if len(x) != col_cnt:
-                print("CSV records have different column length(probably malformed): {}, {}".format(col_cnt,len(x)))
-                return False
-        col_dict = dict()
-        print("----------------")
-        print("Most common value for each column")
-        print("----------------")
-        for i in range(len(data[0])):
-            col_cnt = []
-            for line in data:
-                col_cnt.append(line[i])
-            header_name = header[i] if pargs.noheader == False else i+1
-            col_cnt = Counter(col_cnt).most_common()
-            print("Col '{}' - {} unique value(s):".format(header_name,len(col_cnt)))
-            print("--------most common(s)--------")
-            _ = [print("\tValue: '{}' - Count: '{}'".format(col_cnt[z][0],col_cnt[z][1])) for z in range(len(col_cnt)) if z < 3 ];
-            print("------------------------------")
-        #end for
-        return True
-    #end if
+    try:
+        if stat == True:
+            data = []
+            for line in reader:
+                data.append(line)
+            fr.close()
+            print("File name: {}".format(pargs.file))
+            print("Number of entries: {}".format(len(data)))
+            if pargs.noheader == False:
+                print("Headers of CSV")
+                print("--------------")
+                print(create_write_object(pargs.delimiter,header))
+            if len(data) == 0:return False
+            col_cnt = len(data[0])
+            for x in data:
+                if len(x) != col_cnt:
+                    print("CSV records have different column length(probably malformed): {}, {}".format(col_cnt,len(x)))
+                    return False
+            col_dict = dict()
+            print("----------------")
+            print("Most common value for each column")
+            print("----------------")
+            for i in range(len(data[0])):
+                col_cnt = []
+                for line in data:
+                    col_cnt.append(line[i])
+                header_name = header[i] if pargs.noheader == False else i+1
+                col_cnt = Counter(col_cnt).most_common()
+                print("Col '{}' - {} unique value(s):".format(header_name,len(col_cnt)))
+                print("--------most common(s)--------")
+                _ = [print("\tValue: '{}' - Count: '{}'".format(col_cnt[z][0],col_cnt[z][1])) for z in range(len(col_cnt)) if z < 3 ];
+                print("------------------------------")
+            #end for
+            return True
+        #end if
+    except IOError as e:
+        if e.errno == errno.EPIPE
+            return True
+        return False
+    # end except
     #then handle search query for columns
     #only search the specified columns for pattern otherwise all columns.
-    re_search = None
-    if pargs.search != '':
-        re_search = re.compile(pargs.search)
-    if pargs.search != '':
-        if re_search == None:return False
+    try:
+        re_search = None
+        if pargs.search != '':
+            re_search = re.compile(pargs.search)
+        if pargs.search != '':
+            if re_search == None:return False
+            ln = 0 if pargs.noheader == True else 1
+            if not pargs.noheader: # print header if there is
+                print("{}".format(create_write_object(pargs.delimiter,header)))
+            for line in reader:
+                ln += 1
+                if len(cols) == 0:
+                    for c in line:
+                        if re_search.search(c) != None:
+                            if print_linenum:
+                                print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
+                                break
+                            else:
+                                print("{}".format(create_write_object(pargs.delimiter,line)))
+                                break
+                            #end if
+                        #end if
+                    #end for
+                else:
+                    for c in cols:
+                        if re_search.search(line[c]) != None:
+                            if print_linenum:
+                                print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
+                                break
+                            else:
+                                print("{}".format(create_write_object(pargs.delimiter,line)))
+                                break
+                            #end if
+                        #end if
+                    #end for
+                #end if
+            #end for
+            fr.close()
+            return True
+        #end if
+    except IOError as e:
+        if e.errno == errno.EPIPE
+            return True
+        return False
+    # end except
+    #Now handle most common
+    #Print n most common values for cols (or all)
+    try:
+        if most_common != -1:
+            col_cnt = dict()
+            if len(cols)>0:
+                data = []
+                for line in reader:
+                    data.append(line)
+                fr.close()
+                if len(data) == 0:return False
+                for c in cols:
+                    cnt_cols = [x[c] for x in data]
+                    cnt_cols = Counter(cnt_cols).most_common()
+                    header_name = header[c] if pargs.noheader == False else c+1
+                    print("------column: {}------".format(header_name))
+                    _ = [print("Value: '{}' - Count: '{}'".format(cnt_cols[z][0],cnt_cols[z][1])) for z in range(len(cnt_cols)) if z < most_common];
+                #end for
+                return True
+            else:
+                data = []
+                for line in reader:
+                    data.append(line)
+                fr.close()
+                tmp_cols = [i for i in range(len(data[0]))]
+                
+                for c in tmp_cols:
+                    cnt_cols = [x[c] for x in data]
+                    cnt_cols = Counter(cnt_cols).most_common()
+                    header_name = header[c] if pargs.noheader == False else c+1
+                    print("------column: {}------".format(header_name))
+                    _ = [print("Value: '{}' - Count: '{}'".format(cnt_cols[z][0],cnt_cols[z][1])) for z in range(len(cnt_cols)) if z < most_common];
+                #end for
+                return True
+            #end if
+            return True
+        #end if
+    except IOError as e:
+        if e.errno == errno.EPIPE
+            return True
+        return False
+    # end except
+    ## if nothing specified, print csv file (all or specific columns)
+    ## with header (if there is one) with all or specific columns
+    try:
         ln = 0 if pargs.noheader == True else 1
-        if not pargs.noheader: # print header if there is
-            print("{}".format(create_write_object(pargs.delimiter,header)))
+        if not pargs.noheader:
+            if len(cols) == 0:
+                print("{}".format(create_write_object(pargs.delimiter,header)))
+            else:
+                print("{}".format(create_write_object(pargs.delimiter,[header[c] for c in cols])))
         for line in reader:
             ln += 1
             if len(cols) == 0:
-                for c in line:
-                    if re_search.search(c) != None:
-                        if print_linenum:
-                            print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
-                            break
-                        else:
-                            print("{}".format(create_write_object(pargs.delimiter,line)))
-                            break
-                        #end if
-                    #end if
-                #end for
+                if print_linenum:
+                    print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
+                else:
+                    print("{}".format(create_write_object(pargs.delimiter,line)))
             else:
-                for c in cols:
-                    if re_search.search(line[c]) != None:
-                        if print_linenum:
-                            print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
-                            break
-                        else:
-                            print("{}".format(create_write_object(pargs.delimiter,line)))
-                            break
-                        #end if
-                    #end if
-                #end for
+                if print_linenum:
+                    print("{} - {}".format(ln,create_write_object(pargs.delimiter,[line[c] for c in cols])))
+                else:
+                    print("{}".format(create_write_object(pargs.delimiter,[line[c] for c in cols])))
             #end if
-        #end for
         fr.close()
         return True
-    #end if
-    #Now handle most common
-    #Print n most common values for cols (or all)
-    if most_common != -1:
-        col_cnt = dict()
-        if len(cols)>0:
-            data = []
-            for line in reader:
-                data.append(line)
-            fr.close()
-            if len(data) == 0:return False
-            for c in cols:
-                cnt_cols = [x[c] for x in data]
-                cnt_cols = Counter(cnt_cols).most_common()
-                header_name = header[c] if pargs.noheader == False else c+1
-                print("------column: {}------".format(header_name))
-                _ = [print("Value: '{}' - Count: '{}'".format(cnt_cols[z][0],cnt_cols[z][1])) for z in range(len(cnt_cols)) if z < most_common];
-            #end for
+    except IOError as e:
+        if e.errno == errno.EPIPE
             return True
-        else:
-            data = []
-            for line in reader:
-                data.append(line)
-            fr.close()
-            tmp_cols = [i for i in range(len(data[0]))]
-            
-            for c in tmp_cols:
-                cnt_cols = [x[c] for x in data]
-                cnt_cols = Counter(cnt_cols).most_common()
-                header_name = header[c] if pargs.noheader == False else c+1
-                print("------column: {}------".format(header_name))
-                _ = [print("Value: '{}' - Count: '{}'".format(cnt_cols[z][0],cnt_cols[z][1])) for z in range(len(cnt_cols)) if z < most_common];
-            #end for
-            return True
-        #end if
-        return True
-    #end if
-    ## if nothing specified, print csv file (all or specific columns)
-    ## with header (if there is one) with all or specific columns
-    ln = 0 if pargs.noheader == True else 1
-    if not pargs.noheader:
-        if len(cols) == 0:
-            print("{}".format(create_write_object(pargs.delimiter,header)))
-        else:
-            print("{}".format(create_write_object(pargs.delimiter,[header[c] for c in cols])))
-    for line in reader:
-        ln += 1
-        if len(cols) == 0:
-            if print_linenum:
-                print("{} - {}".format(ln,create_write_object(pargs.delimiter,line)))
-            else:
-                print("{}".format(create_write_object(pargs.delimiter,line)))
-        else:
-            if print_linenum:
-                print("{} - {}".format(ln,create_write_object(pargs.delimiter,[line[c] for c in cols])))
-            else:
-                print("{}".format(create_write_object(pargs.delimiter,[line[c] for c in cols])))
-        #end if
-    fr.close()
-    return True
+        return False
+    # end except
 
 def create_write_object(delimiter,write_array):
     data = io.StringIO()
