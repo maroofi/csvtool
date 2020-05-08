@@ -154,7 +154,6 @@ def main():
             tmp_cols.append(x)
     cols = tmp_cols
     #print(cols)
-    return False
     ###################parsing stat#########################
     stat = pargs.stat
     ##################parsing most_common###################
