@@ -3,7 +3,11 @@
 
 ##### Installation:
 
-###### Using pypi:
+###### Using PIP with Git (recommended):
+```bash 
+pip3 install git+https://github.com/maroofi/csvtool.git
+```
+###### Using pypi (Not sure it's always updated):
 ```bash
 pip3 install csvtool
 ```
