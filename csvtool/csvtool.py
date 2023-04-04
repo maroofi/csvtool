@@ -6,16 +6,41 @@ import sys
 import re
 from collections import Counter
 import io
-def open_file(file_name):
+try:
+    import chardet
+except:
+    print("Can not import chardet library")
+    print("Install it using: pip3 install chardet")
+    sys.exit(1)
+# end except
+
+def open_file(file_name, encoding="utf-8"):
     if file_name == sys.stdin:
         return sys.stdin
     else:
         try:
-            fr = open(file_name,'r')
+            fr = open(file_name,'r', encoding=encoding)
             return fr
         except:
             print("Error: Can not open file {}".format(file_name))
-            exit(-1)
+            exit(1)
+        # end except
+    # end if
+# end def
+
+def open_file_binary(file_name):
+    if file_name == sys.stdin:
+        return None
+    else:
+        try:
+            frb = open(file_name, 'rb')
+            return frb
+        except:
+            print("Error: Can not open file {}".format(file_name))
+            sys.exit(1)
+        # end except
+    # end else
+# end def
 
 
 def main():
@@ -39,7 +64,8 @@ def main():
                         action='store',
                         default='',
                         dest='column',
-                        help="Select specific column(s) in the form of 1,2,.. or 1-3 or 4 or 1,2,3-6,7\n or any combination of values/ranges and perform all operation on these columns (default is all columns)"
+                        help="Select specific column(s) in the form of 1,2,.. or 1-3 or 4 or 1,2,3-6,7\n or any combination of values/ranges "\
+                             "and perform all operation on these columns (default is all columns)"
     )
 
     parser.add_argument('-t','--stat',
@@ -58,7 +84,11 @@ def main():
                         action='store',
                         dest='search',
                         default='',
-                        help="""Search for a specific python regex pattern (optionally\n on specific columns specified by --column or all columns).\nIf (?i) specified, the search is case-insensitive.\nExample:\n# matches test, Test, TeSt, ...\n csvtool output.csv --search '(?i)test'\n# matches all the lines which have exactly 'US' value in their second columns.\n   csvtool output.csv --column 2 --search '^US$'\n# matches all the lines which have not 'Hello' in their second columns.  \n csvtool output.csv -c 2 -s '^(?:(?!Hello).)*$'  """
+                        help="Search for a specific python regex pattern (optionally\n on specific columns specified by --column "\
+                             "or all columns).\nIf (?i) specified, the search is case-insensitive.\nExample:\n# matches test, Test,"\
+                             "TeSt, ...\n csvtool output.csv --search '(?i)test'\n# matches all the lines which have exactly 'US' "\
+                             "value in their second columns.\n   csvtool output.csv --column 2 --search '^US$'\n# matches all the "\
+                             "lines which have not 'Hello' in their second columns.  \n csvtool output.csv -c 2 -s '^(?:(?!Hello).)*$'  "
     )
     parser.add_argument('-r','--print-header',
                         action='store_true',
@@ -86,7 +116,19 @@ def main():
                         help=".CSV input file name")   
        
     pargs = parser.parse_args(sys.argv[1:])
-    fr = open_file(pargs.file)
+    # first detect the encoding type (as sometimes it's not utf-8)
+    detected_encoding = "utf-8"
+    test_data = b""
+    ftest = open_file_binary(pargs.file)
+    test_data = ftest.read(1000) if ftest else b""
+    # end with
+    chardet_result = chardet.detect(test_data)
+    if isinstance(chardet_result, dict) and "encoding" in chardet_result:
+        detected_encoding = chardet_result.get("encoding", None) or "utf-8"
+    # end if
+    if ftest:
+        ftest.close()
+    fr = open_file(pargs.file, encoding=detected_encoding)
     reader = csv.reader(fr,quotechar='"',delimiter=pargs.delimiter,quoting=csv.QUOTE_ALL,skipinitialspace=True)
     header = []
     line_num = 1
