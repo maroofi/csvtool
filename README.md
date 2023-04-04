@@ -8,6 +8,9 @@
 pip3 install git+https://github.com/maroofi/csvtool.git
 ```
 ###### Using pypi (Not sure it's always updated):
+
+**I am not updating pypi package anymore. Always install it using Git method**
+
 ```bash
 pip3 install csvtool
 ```
