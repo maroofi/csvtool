@@ -4,7 +4,7 @@ import os
 here = os.path.abspath(os.path.dirname(__file__))
 
     
-dependencies = []
+dependencies = ["chardet"]
 
 long_description = """
 csvtool is a simple command-line tool to 1) extract statistics, 2) perform regular expression search and, 3) generate output file 
@@ -13,7 +13,7 @@ without writing code for such simple tasks for .CSV files.
 
 setup(
     name='csvtool',
-    version="0.2",
+    version="0.3",
     url='https://github.com/maroofi/csvtool/',
     author='Sourena Maroofi',
     install_requires=dependencies,
