@@ -109,6 +109,12 @@ def main():
                         default=',',
                         help='Specifies the delimiter used in CSV file (default is comma character)'
     )
+    parser.add_argument('--encoding',
+                        action='store',
+                        default=None,
+                        dest='encoding',
+                        help="Specifies the .CSV file encoding. If you don't specify it, we try to guess it."
+    )
     parser.add_argument("file",
                         action='store',
                         default=sys.stdin,
@@ -124,8 +130,14 @@ def main():
     # end with
     chardet_result = chardet.detect(test_data)
     if isinstance(chardet_result, dict) and "encoding" in chardet_result:
-        detected_encoding = chardet_result.get("encoding", None) or "utf-8"
+        if "confidence" in chardet_result and chardet_result["confidence"] > 0.7:
+            detected_encoding = chardet_result.get("encoding", None) or "utf-8"
+        else:
+            detected_encoding = "utf-8"
+        # end if
     # end if
+    if pargs.encoding:
+        detected_encoding = pargs.encoding
     if ftest:
         ftest.close()
     fr = open_file(pargs.file, encoding=detected_encoding)
