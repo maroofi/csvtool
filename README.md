@@ -78,4 +78,4 @@ Year,Make
 
 #### TODO LIST
 1. ~~Add header to the output.~~ :heavy_check_mark:
-2. Add replace command to replace some specific values.
+2. ~~Add replace command to replace some specific values.~~ :heavy_check_mark:
