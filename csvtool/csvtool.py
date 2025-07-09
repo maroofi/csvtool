@@ -233,9 +233,9 @@ def main():
                 print(create_write_object(pargs.delimiter,header))
             if len(data) == 0:return False
             col_cnt = len(data[0])
-            for x in data:
+            for i, x in enumerate(data):
                 if len(x) != col_cnt:
-                    print("CSV records have different column length(probably malformed): {}, {}".format(col_cnt,len(x)))
+                    print("CSV records have different column length(probably malformed - line 0 and line {}): {}, {}".format(i, col_cnt,len(x)))
                     return False
             col_dict = dict()
             print("----------------")
