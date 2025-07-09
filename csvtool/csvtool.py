@@ -236,6 +236,7 @@ def main():
             for i, x in enumerate(data):
                 if len(x) != col_cnt:
                     print("CSV records have different column length(probably malformed - line 0 and line {}): {}, {}".format(i, col_cnt,len(x)))
+                    print("Malformed line: {}".format(x))
                     return False
             col_dict = dict()
             print("----------------")
